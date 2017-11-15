@@ -15,11 +15,14 @@ library(seewave)
 library(forcats)
 library(glue)
 
-praat_stuff_folder <- '/Users/niko/github/praat-stuff'
-textgrids_and_wavs <- '/Users/niko/github/testcorpus/praat/0000'
-formant_file_path <- '/Users/niko/github/testcorpus/praat/formants.txt'
-cog_file_path <- '~/github/testcorpus/praat/cog.txt'
-demonstration = TRUE
+main_folder <- '/Users/niko/github'
+praat_stuff_folder <- glue('{main_folder}/praat-stuff')
+textgrids_and_wavs <- glue('{main_folder}/testcorpus/praat/0000')
+formant_file_path <- glue('{main_folder}/testcorpus/praat/formants.txt')
+cog_file_path <- glue('{main_folder}/testcorpus/praat/cog.txt')
+
+# When this value is TRUE, all information is read from 
+demonstration_mode = TRUE
 
 # This runs a script that regenerates the Praat formant segments
 processing_script = '~/github/praat-stuff/process_praat_segments.sh' 
@@ -27,8 +30,8 @@ processing_script = '~/github/praat-stuff/process_praat_segments.sh'
 
 setWavPlayer('/usr/bin/afplay')
 
-open_praat <- function(filename, start, end){
-  system('open -a /Applications/Praat.app/Contents/MacOS/Praat') # This will not work on Windows…
+open_praat <- function(filename, start, end, praat_executable = '/Applications/Praat.app/Contents/MacOS/Praat'){
+  system(glue('open -a {praat_executable}')) # This will not work on Windows…
   system(glue('~/bin/sendpraat_carbon praat "execute {praat_stuff_folder}/open_segment.praat {textgrids_and_wavs}/{filename}.wav {textgrids_and_wavs}/{filename}.TextGrid {start} {end}"'))
 }
 
