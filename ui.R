@@ -1,9 +1,5 @@
 
-# This is the user-interface definition of a Shiny web application.
-# You can find out more about building applications with Shiny here:
-#
-# http://shiny.rstudio.com
-#
+# User interface of Shiny app is specified here
 
 library(shiny)
 library(shinydashboard)
@@ -14,13 +10,15 @@ library(tuneR)
 library(seewave)
 library(forcats)
 
+# This tells we are using dashboard
+
 shinyUI(dashboardPage(
   dashboardHeader(title = "Phoneme-viewer"),
   dashboardSidebar(sidebarMenu(
     menuItem("Vowels", tabName = "vowels", icon = icon("line-chart")),
     menuItem("Sibilants", tabName = "sibilants", icon = icon("hourglass-o")),
     menuItem("Extra", tabName = "cats", icon = icon("coffee"))
-  )),
+  )), # Menu items are specified above, tabls come next as tabItem elements
   dashboardBody(
     tabItems(
       tabItem(tabName = "vowels",

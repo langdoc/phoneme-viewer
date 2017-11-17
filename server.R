@@ -15,26 +15,41 @@ library(seewave)
 library(forcats)
 library(glue)
 
+# This application has functionalities that wouldn't make sense in
+# a web application as such, so I try to set the paths, which maybe
+# are inevitable, here as nicely as possible. I don't remember,
+# but I think something in tuneR or PraatScript interaction
+# didn't like relative paths -- I may be wrong too.
+
 main_folder <- '/Users/niko/github'
 praat_stuff_folder <- glue('{main_folder}/praat-stuff')
 textgrids_and_wavs <- glue('{main_folder}/testcorpus/praat/0000')
 formant_file_path <- glue('{main_folder}/testcorpus/praat/formants.txt')
 cog_file_path <- glue('{main_folder}/testcorpus/praat/cog.txt')
 
-# When this value is TRUE, all information is read from 
+# When this value is TRUE, all information is read from files
 demonstration_mode = TRUE
 
 # This runs a script that regenerates the Praat formant segments
 processing_script = '~/github/praat-stuff/process_praat_segments.sh' 
+# Now I just select it and run from here. Could be also a button in GUI
 # system(glue('bash {processing_script}'))
 
+# This is probably Mac-specific
 setWavPlayer('/usr/bin/afplay')
 
+# This function will be used to open Praat,
+# the trick is to open Praat first with one command,
+# and then tell it to go to some specific place.
+# Not implemented: opening Praat directly from one spot 
 open_praat <- function(filename, start, end, praat_executable = '/Applications/Praat.app/Contents/MacOS/Praat'){
   system(glue('open -a {praat_executable}')) # This will not work on Windows…
   system(glue('~/bin/sendpraat_carbon praat "execute {praat_stuff_folder}/open_segment.praat {textgrids_and_wavs}/{filename}.wav {textgrids_and_wavs}/{filename}.TextGrid {start} {end}"'))
 }
 
+# This read the formant file. Bit complicated,
+# but I didn't get PraatScript to produce something
+# more beautiful.
 read_formants <- function(formant_file){
   suppressWarnings(read_tsv(formant_file,
                             skip = 1,
@@ -61,13 +76,17 @@ read_formants <- function(formant_file){
     mutate(duration = as.double(end_time) - as.double(start_time))
 }
 
+# For some reason there were just individual points with formant
+# below that, and they were spoiling the plots, I just removed them for now
 vowels <- read_formants(formant_file = formant_file_path)
 vowels <- vowels %>% filter(f1 < 1300)
 
 # readr::write_rds(vowels, 'vowels.rds')
 
+# This is used to set sibilant factor levels
 sib_levels <- c('s', 's_j', 'S', 'z', 'z_j', 'Z')
 
+# This reads the cog file
 sibilants <- read_tsv(cog_file_path, 
                    col_names = tolower(c("filename", "Token", "Phoneme", "Timepoint", "DurationMS", "HighestFreq", "HighestAmp", "SpectralCOG", "time_start", "time_end")), 
                    col_types = cols(
@@ -86,9 +105,12 @@ sibilants <- read_tsv(cog_file_path,
   mutate(filename = stringr::str_extract(filename, '[^/]+(?=.wav$)')) %>%
   filter(! filename == 'kpv_izva20140404IgusevJA-b-373') # this had just horrible segmentation
 
+# Server part starts here
 
 shinyServer(function(input, output) {
 
+  # vowel plot
+  
   output$vowel_plot <- renderPlot({
     vowels %>% 
       filter(duration > input$range[1]) %>%
@@ -103,6 +125,8 @@ shinyServer(function(input, output) {
       scale_color_brewer(palette="Accent")
   })
   
+  # Sibilant plot
+  
   output$plot1 <- renderPlot({
     sibilants %>% 
       #      filter(duration > input$range[1]) %>%
@@ -113,10 +137,14 @@ shinyServer(function(input, output) {
       geom_point()
   })
   
+  # Cat image
+  
   output$cat_image <- renderPlot({ 
     input$update
     isolate(meow::meow())
   })
+  
+  # These collect the click infos into tables
   
   output$click_info <- renderDataTable({
     nearPoints(sibilants, input$sibilant_click, addDist = FALSE)
@@ -126,7 +154,7 @@ shinyServer(function(input, output) {
     nearPoints(vowels, input$vowel_click, addDist = FALSE)
   })
   
-  
+  # This may be worth testing: brush selects an area
   
   # output$brush_info <- renderText({
   #   #brushedPoints(values, input$plot1_brush)
@@ -134,14 +162,18 @@ shinyServer(function(input, output) {
   #   time
   # })
   # 
+  
+  # This ties opening the file into button
   observeEvent(input$action, {
     open_praat(filename = nearPoints(vowels, input$vowel_click, addDist = FALSE) %>% .$filename, start = 1, end = 2)
   })
   
+  # Same, doesn't work now
   observeEvent(input$open_sibilant, {
     open_praat(filename = nearPoints(values, input$sibilant_click, addDist = FALSE) %>% .$filename, start = 1, end = 2)
   })
   
+  # This plays sound, but doesn't work now, have to check why
   observeEvent(input$play, {
     current_selection <- nearPoints(vowels, input$vowel_click, addDist = FALSE) %>% slice(1) %>% .$filename
     
