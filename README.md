@@ -33,3 +33,11 @@ View & Edit
 And this can then be combined into button in Shiny application or where ever. Of course it will not work as a web application in that sense, but it allows quite fast interactive work.
 
 ![](example.gif)
+
+In principle it should be runnable with:
+
+```
+shiny::runGitHub("langdoc/phoneme-viewer")
+```
+
+But I have honestly no idea whether it works on anyone elses computer.
