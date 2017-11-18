@@ -2,6 +2,8 @@
 
 This is a simple application that demonstrates possibilities of viewing and exploring information extracted from Praat TextGrids. As the application is able to open files in Praat, it is easy to iterate through the values that look suspicious, which often indicates they are not aligned correctly.
 
+The concept is explained in these [slides](https://langdoc.github.io/elan_lectures/lecture-4#/integrating-tools), just move down with arrow. 
+
 The whole idea is that PraatScript that extracts the information is run in Shell script which could also be tied into a system call, and this way we can generate them again immediately after editing TextGrid. The application is based on the idea that we can open TextGrid through something like this:
 
 ```
@@ -51,4 +53,4 @@ In principle it should be runnable with:
 shiny::runGitHub("langdoc/phoneme-viewer")
 ```
 
-But I have no idea whether it works on anyone elses computer. In principle the sendpraat stuff should be pretty standard.
+But I have no idea whether it works on anyone elses computer. In principle the sendpraat stuff should be pretty standard. Obviously it would assume to find the TextGrids from somewhere.
