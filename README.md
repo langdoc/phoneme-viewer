@@ -32,7 +32,7 @@ View & Edit
 
 ```
 
-And this can then be combined into button in Shiny application or where ever. Of course it will not work as a web application in that sense, but it allows quite fast interactive work.
+This doesn't work 100% as it doesn't take time values into account, I would like to open the TextGrid on that word, for example, but now I didn't finish it. But already this can  be combined into button in Shiny application, and as TextGrids I work with are now very short, this works ok. Of course the whole setup will not work as a web application in that sense, but it allows quite fast interactive work.
 
 Idea is that you:
 
