@@ -32,6 +32,17 @@ View & Edit
 
 And this can then be combined into button in Shiny application or where ever. Of course it will not work as a web application in that sense, but it allows quite fast interactive work.
 
+Idea is that you:
+
+- Select something in a plot (click and brush are both implementable)
+- It appears in the data table below the plot
+- Praat button does what was described above
+
+Problems:
+
+- For some reason listening button doesn't work
+- Centre of gravity part doesn't work for Praat, it would be easy to fix though
+
 ![](example.gif)
 
 In principle it should be runnable with:
@@ -40,4 +51,4 @@ In principle it should be runnable with:
 shiny::runGitHub("langdoc/phoneme-viewer")
 ```
 
-But I have honestly no idea whether it works on anyone elses computer.
+But I have no idea whether it works on anyone elses computer. In principle the sendpraat stuff should be pretty standard.
